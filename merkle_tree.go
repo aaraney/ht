@@ -123,19 +123,16 @@ type prefixAndNode struct {
 func (n *Node) buildString(delm string) []string {
 	if n == nil {
 		panic("Cannot build string from nil Node")
-	} else if n.Leaf() {
-		return []string{fmt.Sprintf("%s %s", n.val, n.name)}
-	}
-
-	var current []prefixAndNode
-	horizon := []prefixAndNode{{"", n}}
-	var levelOuput []string
+	} 
 	var output []string
+
+	current := []prefixAndNode{{"", n}}
+	var horizon []prefixAndNode
+	var levelOutput []string
 
 	for len(horizon) > 0 || len(current) > 0 {
 		for i := range current {
 			n := current[i]
-
 			prefix := n.prefix
 			node := n.node
 
@@ -153,13 +150,12 @@ func (n *Node) buildString(delm string) []string {
 				}
 			}
 
-			// TODO: sort before appending to output
-			levelOuput = append(levelOuput, hashAndName)
+			levelOutput = append(levelOutput, hashAndName)
 
 		}
-		slices.Sort(levelOuput)
-		output = append(output, levelOuput...)
-		levelOuput = nil
+		slices.Sort(levelOutput)
+		output = append(output, levelOutput...)
+		levelOutput = nil
 
 		current = horizon
 		horizon = nil
