@@ -114,25 +114,62 @@ func (n *Node) buildTree(h Hasher) string {
 	return val
 }
 
+type prefixAndNode struct {
+	prefix string
+	node   *Node
+}
+
 // TODO: I dont really like the name of this method.
-func (n *Node) buildString(prefix, delm string, out *[]string) {
+func (n *Node) buildString(delm string) []string {
 	if n == nil {
 		panic("Cannot build string from nil Node")
 	} else if n.Leaf() {
-		*out = append(*out, fmt.Sprintf("%s %s%s", n.val, prefix, n.name))
-		return
+		return []string{fmt.Sprintf("%s %s", n.val, n.name)}
 	}
 
-	*out = append(*out, fmt.Sprintf("%s %s%s%s", n.val, prefix, n.name, delm))
-	for _, node := range n.children {
-		node.buildString(fmt.Sprintf("%s%s%s", prefix, n.name, delm), delm, out)
+	var current []prefixAndNode
+	horizon := []prefixAndNode{{"", n}}
+	var levelOuput []string
+	var output []string
+
+	for len(horizon) > 0 || len(current) > 0 {
+		for i := range current {
+			n := current[i]
+
+			prefix := n.prefix
+			node := n.node
+
+			var hashAndName string
+
+			if node.Leaf() {
+				name := fmt.Sprintf("%s%s", prefix, node.name)
+				hashAndName = fmt.Sprintf("%s %s", node.val, name)
+			} else {
+				name := fmt.Sprintf("%s%s%s", prefix, node.name, delm)
+				hashAndName = fmt.Sprintf("%s %s", node.val, name)
+
+				for _, child := range node.children {
+					horizon = append(horizon, prefixAndNode{name, child})
+				}
+			}
+
+			// TODO: sort before appending to output
+			levelOuput = append(levelOuput, hashAndName)
+
+		}
+		slices.Sort(levelOuput)
+		output = append(output, levelOuput...)
+		levelOuput = nil
+
+		current = horizon
+		horizon = nil
 	}
+
+	return output
 }
 
 func (n *Node) String() string {
-	var out []string
-	n.buildString("", "/", &out)
-	slices.Sort(out)
+	out := n.buildString("/")
 	return strings.Join(out, "\n")
 }
 
