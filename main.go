@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
+
+	"github.com/jedib0t/go-pretty/v6/list"
 )
 
 type config struct {
@@ -106,12 +108,13 @@ func shutdownHandler(sig chan os.Signal, done chan struct{}) {
 
 func main() {
 	nWorkers := flag.Int("n", runtime.NumCPU(), "Maximum number of workers. Defaults to number of cpus.")
+	format := flag.String("fmt", "flat", "Output format. Options are `flat`, `tree`.")
 	flag.Parse()
 
 	// TODO: support stdin
 	path := "."
-	if len(os.Args) > 1 {
-		path = os.Args[1]
+	if len(flag.Args()) > 1 {
+		path = flag.Args()[0]
 	}
 
 	// channel that is used to signal an early exit.
@@ -125,5 +128,16 @@ func main() {
 	signal.Notify(sig, os.Interrupt)
 
 	merkelTree := WalkFilesAndBuildTree(path, done, WithNWorkers(*nWorkers))
-	fmt.Println(merkelTree)
+
+	switch *format {
+	case "flat":
+		fmt.Println(merkelTree)
+	case "tree":
+		l := list.List{}
+		l.SetStyle(list.StyleConnectedRounded)
+		BuildTreeView(*merkelTree, &l)
+		fmt.Println(l.Render())
+	default:
+		fmt.Println(merkelTree)
+	}
 }
