@@ -113,7 +113,7 @@ func main() {
 
 	// TODO: support stdin
 	path := "."
-	if len(flag.Args()) > 1 {
+	if len(flag.Args()) > 0 {
 		path = flag.Args()[0]
 	}
 
