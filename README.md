@@ -15,6 +15,18 @@ Before you begin, make sure you have the following prerequisites:
 
 1. Open your terminal.
 
+2. `go install github.com/aaraney/ht@latest`
+
+3. Run `ht`.
+
+    ```shell
+    ./ht --help
+    ```
+
+#### For Development
+
+1. Open your terminal.
+
 2. Clone the repo.
 
     ```shell
