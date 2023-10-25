@@ -30,14 +30,22 @@ func buildTreeView(prefix string, n *Node, l *list.List) {
 	for _, child := range n.children {
 		children = append(children, child)
 	}
-	// sort by hash val to make levels deterministic
+	// sort by hash val then by name if needed to make levels deterministic
 	slices.SortFunc(children, func(a, b *Node) int {
+        // sort by val then by name
 		if a.val == b.val {
-			return 0
+			if a.name == b.name {
+				return 0
+			} else if a.name < b.name {
+				return -1
+			} else {
+				return 1
+			}
 		} else if a.val < b.val {
 			return -1
+		} else {
+			return 1
 		}
-		return 1
 	})
 
 	for _, child := range children {
