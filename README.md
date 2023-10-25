@@ -13,6 +13,20 @@ Before you begin, make sure you have the following prerequisites:
 
 ### Installation
 
+#### Using brew
+
+1. Open your terminal.
+
+2. `brew install aaraney/tap/ht`
+
+3. Run `ht`.
+
+    ```shell
+    ./ht --help
+    ```
+
+#### Using go install
+
 1. Open your terminal.
 
 2. `go install github.com/aaraney/ht@latest`
